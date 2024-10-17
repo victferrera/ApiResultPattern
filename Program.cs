@@ -1,4 +1,8 @@
 
+using ApiResultPattern.Repository;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+
 namespace ApiResultPattern
 {
     public class Program
@@ -8,8 +12,15 @@ namespace ApiResultPattern
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContextPool<Database.AppContext>(opt => opt.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BookStore;Trusted_Connection=True;"));
+            builder.Services.AddTransient<IBookRepository, BookRepository>();
+            builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(opt =>
+                {
+                    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
