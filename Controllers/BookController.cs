@@ -1,4 +1,5 @@
-﻿using ApiResultPattern.Models;
+﻿using ApiResultPattern.DTO;
+using ApiResultPattern.Models;
 using ApiResultPattern.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace ApiResultPattern.Controllers
         }
 
         [HttpPost("newbook")]
-        public async Task NewBook(Book book)
+        public async Task NewBook(BookDTO book)
         {
             await _repo.Create(book);
         }

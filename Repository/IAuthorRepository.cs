@@ -1,9 +1,9 @@
-﻿using ApiResultPattern.Models;
+﻿using ApiResultPattern.DTO;
 
 namespace ApiResultPattern.Repository
 {
     public interface IAuthorRepository
     {
-        Task Create(Author author);
+        Task Create(AuthorDTO author);
     }
 }

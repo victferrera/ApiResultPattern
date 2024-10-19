@@ -1,4 +1,4 @@
-﻿using ApiResultPattern.Models;
+﻿using ApiResultPattern.DTO;
 using ApiResultPattern.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +16,7 @@ namespace ApiResultPattern.Controllers
         }
 
         [HttpPost("newauthor")]
-        public async Task NewAuthor(Author author)
+        public async Task NewAuthor(AuthorDTO author)
         {
             await _repo.Create(author);
         }
