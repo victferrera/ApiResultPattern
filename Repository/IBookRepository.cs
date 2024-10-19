@@ -1,12 +1,13 @@
-﻿using ApiResultPattern.DTO;
+﻿using ApiResultPattern.Application;
+using ApiResultPattern.DTO;
 using ApiResultPattern.Models;
 
 namespace ApiResultPattern.Repository
 {
     public interface IBookRepository
     {
-        Task Create(BookDTO book);
-        Task<Book> GetBookById(int id);
-        Task<IEnumerable<Book>> GetAllBooks();
+        Task<Result<Book>> Create(BookDTO book);
+        Task<Result<Book>> GetBookById(int id);
+        Task<Result<IEnumerable<Book>>> GetAllBooks();
     }
 }

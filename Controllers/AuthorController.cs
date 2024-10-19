@@ -16,9 +16,14 @@ namespace ApiResultPattern.Controllers
         }
 
         [HttpPost("newauthor")]
-        public async Task NewAuthor(AuthorDTO author)
+        public async Task<IActionResult> NewAuthor(AuthorDTO author)
         {
-            await _repo.Create(author);
+            var result = await _repo.Create(author);
+
+            if (result.IsFailure)
+                return BadRequest(result.Error);
+
+            return Ok();
         }
     }
 }

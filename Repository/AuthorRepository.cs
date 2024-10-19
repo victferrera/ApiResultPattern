@@ -1,4 +1,5 @@
-﻿using ApiResultPattern.DTO;
+﻿using ApiResultPattern.Application;
+using ApiResultPattern.DTO;
 using ApiResultPattern.Models;
 
 namespace ApiResultPattern.Repository
@@ -12,17 +13,19 @@ namespace ApiResultPattern.Repository
             _ctx = ctx;
         }
 
-        public async Task Create(AuthorDTO author)
+        public async Task<Result<Author>> Create(AuthorDTO author)
         {
             var existingAuthor = _ctx.Authors.Where(x => x.Name == author.Name).FirstOrDefault();
 
             if (existingAuthor != null)
-                throw new Exception("There is already an author with the same name");
+                return Result<Author>.Failure(AuthorErrors.AuthorAlreadyExists);
 
             Author newAuthor = new Author(author.Name);
 
             _ctx.Authors.Add(newAuthor);
             await _ctx.SaveChangesAsync();
+
+            return Result<Author>.Success(newAuthor);
         }
     }
 }

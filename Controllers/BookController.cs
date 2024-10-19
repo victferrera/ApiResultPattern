@@ -1,4 +1,5 @@
-﻿using ApiResultPattern.DTO;
+﻿using ApiResultPattern.Application;
+using ApiResultPattern.DTO;
 using ApiResultPattern.Models;
 using ApiResultPattern.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -16,21 +17,32 @@ namespace ApiResultPattern.Controllers
         }
 
         [HttpPost("newbook")]
-        public async Task NewBook(BookDTO book)
+        public async Task<IActionResult> NewBook(BookDTO book)
         {
-            await _repo.Create(book);
+            var result = await _repo.Create(book);
+
+            if (result.IsFailure)
+                return BadRequest(result.Error);
+
+            return Ok(BookResponse.Create(result.Data));
         }
 
         [HttpGet("allbooks")]
-        public async Task<IEnumerable<Book>> AllBooks()
+        public async Task<IActionResult> AllBooks()
         {
-            return await _repo.GetAllBooks();
+            var result =  await _repo.GetAllBooks();
+
+            return Ok(BookResponse.Create(result.Data));
         }
 
         [HttpGet("bookbyid/{id}")]
-        public async Task<Book> BookById(int id)
+        public async Task<IActionResult> BookById(int id)
         {
-            return await _repo.GetBookById(id);
+            var book = await _repo.GetBookById(id);
+
+            if (book == null)
+                return NoContent();
+            return Ok(book);
         }
     }
 }

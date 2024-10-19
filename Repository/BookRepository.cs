@@ -1,4 +1,5 @@
-﻿using ApiResultPattern.DTO;
+﻿using ApiResultPattern.Application;
+using ApiResultPattern.DTO;
 using ApiResultPattern.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,27 +13,38 @@ namespace ApiResultPattern.Repository
             _ctx = ctx;
         }
 
-        public async Task Create(BookDTO book)
+        public async Task<Result<Book>> Create(BookDTO book)
         {
             var existingBook = _ctx.Books.Where(x => x.Name == book.Name).FirstOrDefault();
 
             if (existingBook != null)
-                throw new Exception("There is already a book with the same name.");
+                return Result<Book>.Failure(BookErrors.BookAlreadyExists);
+
+            var author = _ctx.Authors.Where(x => x.Id == book.AuthorId).FirstOrDefault();
+
+            if (author == null)
+                return Result<Book>.Failure(AuthorErrors.AuthorNotExist);
 
             Book newBook = new Book(book.Name, book.ReleaseData, book.AuthorId);
 
             _ctx.Books.Add(newBook);
             await _ctx.SaveChangesAsync();
+
+            return Result<Book>.Success(newBook);
         }
 
-        public async Task<IEnumerable<Book>> GetAllBooks()
+        public async Task<Result<IEnumerable<Book>>> GetAllBooks()
         {
-            return await _ctx.Books.Include(p => p.Author).ToListAsync();
+            var books =  await _ctx.Books.Include(p => p.Author).ToListAsync();
+
+            return Result<IEnumerable<Book>>.Success(books);
         }
 
-        public async Task<Book> GetBookById(int id)
+        public async Task<Result<Book>> GetBookById(int id)
         {
-            return await _ctx.Books.Where(p => p.Id == id).FirstOrDefaultAsync();
+            var book = await _ctx.Books.Where(p => p.Id == id).FirstOrDefaultAsync();
+
+            return Result<Book>.Success(book);
         }
     }
 }
